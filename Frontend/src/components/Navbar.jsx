@@ -1,6 +1,6 @@
 import React from 'react'
 import {Link} from "react-router-dom";
-import {MessageSquare,Settings,LogOut,User, MessageCircleCodeIcon, MessageCircleMoreIcon, MessageCircleReplyIcon, LucideMessageCircleHeart, MessageCircleHeart} from "lucide-react"
+import {Settings,LogOut,User, MessageCircleHeart} from "lucide-react"
 import { useAuthStore } from "../store/useAuthStore"
 
 const Navbar = () => {

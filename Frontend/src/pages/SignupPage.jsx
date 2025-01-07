@@ -1,7 +1,7 @@
 import React, { useState, } from 'react'
 import { useAuthStore } from '../store/useAuthStore';
-import { Mail, MessageSquare, User, Lock, EyeOff, Eye, Loader2, MessageCircleHeart } from 'lucide-react';
-import { Link, Navigate } from 'react-router-dom';
+import { Mail, User, Lock, EyeOff, Eye, Loader2, MessageCircleHeart } from 'lucide-react';
+import { Link} from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 const SignupPage = () => {
