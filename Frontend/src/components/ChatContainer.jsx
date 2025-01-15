@@ -1,19 +1,33 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import { useChatStore } from "../store/useChatStore" ;
 import ChatHeader from './ChatHeader';
 import MessageInput from './sketetons/MessageInput';
 import MessageSkeleton from './sketetons/MessageSkeleton';
 import { useAuthStore } from '../store/useAuthStore';
-import  {formatMessageTime} from "../lib/utils"
+import  {formatMessageTime} from "../lib/utils";
+
 
 const ChatContainer = () => {
-  const {messages,selectedUser,isMessagesLoading,getMessages}=useChatStore();
+  const {messages,selectedUser,isMessagesLoading,getMessages,subscribeToMessages,unsubscribeFromMessages}=useChatStore();
   const {authUser}=useAuthStore();
+  const messageScrollRef = useRef(null);
+
+  
   useEffect(()=>{
-    getMessages(selectedUser._id)
-  },[selectedUser._id,getMessages])
+    getMessages(selectedUser._id);
+    subscribeToMessages();
+    //on deMount
+    return()=>unsubscribeFromMessages();
+  },[selectedUser._id,getMessages,unsubscribeFromMessages,subscribeToMessages])
   
-  
+  //usefeect to scroll on new message
+  useEffect(()=>{
+    if(messageScrollRef.current && messages){
+      messageScrollRef.current.scrollIntoView({behavior:"smooth"});
+    }
+    
+  },[messages])
+
   if(isMessagesLoading) return (
     <div className='flex-1 flex flex-col overflow-auto'>
       <ChatHeader/>
@@ -31,7 +45,9 @@ const ChatContainer = () => {
         {messages.map((message)=>(
           <div
             key={message._id}
-            className={`chat ${message.senderId===authUser._id ? "chat-end":"chat-start"}`}>
+            className={`chat ${message.senderId===authUser._id ? "chat-end":"chat-start"}`}
+            ref={messageScrollRef}
+            >
               <div className='chat-image avatar'>
                 <div className='size-10 rounded-full border'>
                   <img src={message.senderId===authUser._id?authUser.profilePic || "/avatar.png": selectedUser.profilePic || "/avatar.png"} />
@@ -51,13 +67,18 @@ const ChatContainer = () => {
                 />
               )}
               {message.text && <p>{message.text}</p>}
+              
             </div>
+            
           </div>
+          
           
         ))}
       </div>
+      
 
       <MessageInput/>
+      
     </div>
   );
 }
